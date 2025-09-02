@@ -1,13 +1,13 @@
 library(brms)
 library(tidybayes)
 library(tidyverse)
-library(readxl)
 library(patchwork)
 
-imtp <- read_xlsx("/Users/tara/Desktop/PhD/Study2/Raw data file_1.00.xlsx")
-
+# choose metric and method to plot
 met <- "Force at 100ms [N]"
 method <- "TRAD"
+
+imtp <- read.csv("imtpanalysis/rawdata_synthetic.csv")
 
 imtp$Method <- as.factor(imtp$Method)
 imtp$Participant <- as.factor(imtp$Participant)
@@ -16,14 +16,13 @@ imtp$Value <- as.numeric(imtp$Value)
 
 df <- imtp %>% 
   filter(Metric == met) %>%
-  filter(Trial %in% paste("Trial", 1:5)) %>% 
   filter(Method == method)
 
 #formula <- bf(Value ~ (1|Participant))
 formula <- bf(Value ~ (1|Participant), sigma ~ (1|Participant))
 
-m1 <- brm(formula, data = df %>% filter(Day == "D1"), family = gaussian(), chains = 4, cores = 4, iter = 2000)
-m2 <- brm(formula, data = df %>% filter(Day == "D2"), family = gaussian(), chains = 4, cores = 4, iter = 2000)
+m1 <- brm(formula, data = df %>% filter(Day == "D1"), family = gaussian(), chains = 4, cores = 4, iter = 4000)
+m2 <- brm(formula, data = df %>% filter(Day == "D2"), family = gaussian(), chains = 4, cores = 4, iter = 4000)
 
 # model parameters
 # summary(m1)

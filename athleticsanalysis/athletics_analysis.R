@@ -3,11 +3,12 @@ library(mclust)
 library(moments)
 library(brms)
 library(gganimate)
+library(sn)
 
-data_file <- "data/all_athlete_trials_2022_2025_longjumpwomen.csv"
+data_file <- "all_athlete_trials_2022_2025_longjumpwomen.csv"
 event <- "Long Jump"
 
-#### DATA
+#### LOADING DATA (real or fake)
 
 tiladata <- read.csv(data_file)
 
@@ -152,7 +153,7 @@ summary(m)
 
 #### INDIVIDUAL MODELLED DISTRIBUTION - BAYESIAN UPDATING EXAMPLE
 
-athlete_name <- "Malaika Mihambo" 
+athlete_name <- "Malaika Mihambo" # Paris silver medallist
 
 athlete_data_all <- tiladata_clean %>%
   filter(athlete == athlete_name) %>%
@@ -210,7 +211,6 @@ for (i in seq_along(date_groups)) {
   )
 }
 
-
 # combine posterior draws
 posterior_df <- bind_rows(posterior_list)
 obs_points_df <- bind_rows(obs_points_list)
@@ -231,7 +231,7 @@ p <- ggplot(posterior_df, aes(x = value)) +
     alpha = 0.8
   ) +
   labs(
-    title = "Posterior for Malaika Mihambo's Performance\nAfter {frame} Dates — {closest_date}",
+    title = paste0("Posterior for Athlete 1's Performance\nAfter {frame} Dates — {closest_date}"),
     x = "Estimated Result (on original scale)",
     y = "Density",
     colour = "Observed Date"
@@ -273,15 +273,14 @@ ggsave(
 
 #### PROBABILITIES OF ACHIEVING RESULTS
 
-# plot of final distribution (with all 2025 observations) and markings for results of interest
+# plot of above athlete's final distribution from above step with markings for results of interest
 
-# just take last plot from above (so all obs)
 last_step <- max(posterior_df$update_step)
 plot_df <- posterior_df %>% filter(update_step == last_step)
 obs_df  <- obs_points_df %>% filter(update_step == last_step)
 plot_date <- unique(plot_df$date)
 
-# Reference marks
+# reference marks
 ref_lines <- data.frame(
   label = c("Paris 2024 Bronze", "Paris 2024 Gold", "World Record"),
   value = c(6.96, 7.10, 7.52)
@@ -333,4 +332,3 @@ data.frame(
   Threshold = c(6.96, 7.10, 7.52),
   Probability = c(prob_bronze, prob_gold, prob_wr)
 )
-

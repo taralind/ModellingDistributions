@@ -1,7 +1,6 @@
 library(brms)
 library(tidybayes)
 library(tidyverse)
-library(readxl)
 library(DescTools)
 library(irr)
 
@@ -47,11 +46,8 @@ calculate_overlap <- function(df) {
   return(overlap)
 }
 
-# Read data
-imtp <- read_xlsx("/Users/tara/Desktop/PhD/Study2/Raw data file_1.00.xlsx")
-imtp <- imtp %>% 
-  mutate(across(c(Method, Participant, Day), as.factor),
-         Value = as.numeric(Value))
+# Data
+imtp <- read.csv("imtpanalysis/rawdata_synthetic.csv")
 
 # Model settings
 metrics <- c("Net Peak Vertical Force [N]", "Net Force at 100ms [N]")
@@ -68,7 +64,7 @@ for (met in metrics) {
       fam <- families[[fam_name]]
       
       df <- imtp %>% 
-        filter(Metric == met, Trial %in% paste("Trial", 1:5), Method == method)
+        filter(Metric == met, Method == method)
       
       formula <- bf(Value ~ (1|Participant), sigma ~ (1|Participant))
       
@@ -160,6 +156,7 @@ for (met in metrics) {
 
 final_results <- bind_rows(results_list)
 write_csv(final_results, "imtp_model_fit_metrics.csv")
+
 
 # Traditional metrics
 
