@@ -3,12 +3,11 @@ library(mclust)
 library(moments)
 library(brms)
 library(gganimate)
-library(sn)
 
 data_file <- "all_athlete_trials_2022_2025_longjumpwomen.csv"
 event <- "Long Jump"
 
-#### LOADING DATA (real or fake)
+#### LOADING DATA
 
 tiladata <- read.csv(data_file)
 
