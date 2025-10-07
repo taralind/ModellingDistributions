@@ -4,7 +4,7 @@ library(tidyverse)
 library(patchwork)
 
 # choose metric and method to plot
-met <- "Force at 100ms [N]"
+met <- "Net Force at 100ms [N]"
 method <- "TRAD"
 
 imtp <- read.csv("imtpanalysis/rawdata_synthetic.csv")
